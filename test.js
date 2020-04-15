@@ -1412,13 +1412,12 @@ module.exports={
     "fetchSpec": "^2.2.0"
   },
   "_requiredBy": [
-    "#USER",
     "/"
   ],
   "_resolved": "https://registry.npmjs.org/node-osu/-/node-osu-2.2.0.tgz",
   "_shasum": "325f1f1961ebfe288ef1c2c4f7652a91837542e9",
   "_spec": "node-osu@^2.2.0",
-  "_where": "/Users/kousakananako/Documents/GitHub/EloMapPoolExplorer",
+  "_where": "/Users/kousakananako/Documents/GitHub/elo-mappool-client",
   "author": {
     "name": "brussell98"
   },
@@ -3532,7 +3531,6 @@ function MapPool({
     this.base = apiBase;
     this.autoComplete = autoComplete;
     this.sample = sample;
-    //this.bancho = new osu('9aa58c3820b6a95beb5b4430df5f88f5812cdaf1', { parseNumeric: true });
 }
 MapPool.prototype.apiGetMap = function(mapped) {
     // console.log(mapped);
