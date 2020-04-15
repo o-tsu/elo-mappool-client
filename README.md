@@ -9,7 +9,7 @@ browserify -r ./eloUploadTool.js:elo-mappool-api > test.js
 //new Pool
 //apiResult parsed JSON from elo
 //api instance of MapPool
-returns Pool
+//returns Pool
 Pool.constructor(apiResult,api)
 
 //get maps in pool
@@ -42,6 +42,7 @@ Pool.mapping(apiResult)
 //apiResult parsed JSON from elo
 //pool Pool
 //api MapPool instance
+//returns Map
 Map.constructor(apiResult, pool, api)
 
 //update map in pool
