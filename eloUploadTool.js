@@ -36,7 +36,6 @@ function MapPool({
     this.base = apiBase;
     this.autoComplete = autoComplete;
     this.sample = sample;
-    //this.bancho = new osu('9aa58c3820b6a95beb5b4430df5f88f5812cdaf1', { parseNumeric: true });
 }
 MapPool.prototype.apiGetMap = function(mapped) {
     // console.log(mapped);
