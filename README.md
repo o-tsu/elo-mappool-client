@@ -158,7 +158,7 @@ MapPool.uploadMapsIntoPool(list,pool)
 MapPool.deleteMapFromPool(map,pool)
 
 ```
-Try not use functions below.
+Try not use the functions listed below.
 ```javascript
 MapPool.apiGetMap(map) // map: {id: beatmap_id}
 MapPool.mapping(map)
