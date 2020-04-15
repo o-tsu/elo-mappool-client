@@ -1,0 +1,17 @@
+{
+  "name": "elo-mappool-client",
+  "version": "0.0.0",
+  "description": "map pool reader & editor api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jquery-param": "^1.0.4",
+    "node-fetch": "^2.6.0",
+    "node-osu": "^2.2.0",
+    "url": "^0.11.0"
+  }
+}
