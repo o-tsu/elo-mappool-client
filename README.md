@@ -1,5 +1,5 @@
 # elo-mappool-client
-
+* all functions return Promise.
 ```bash
 npm install
 browserify -r ./eloUploadTool.js:elo-mappool-api > test.js
@@ -127,7 +127,7 @@ MapPool.createPool(pool)
 //pool.oldName need be different to new Name if you are willing to change the name
 //pool.status string,
 //pool.submitter int
-//returns 
+//returns Pool
 MapPool.editPoolByName(pool)
 
 //get all maps in pool
