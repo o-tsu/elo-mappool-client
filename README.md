@@ -4,6 +4,12 @@
 npm install
 browserify -r ./eloUploadTool.js:elo-mappool-api > test.js
 ```
+```html
+<script src= './test.js'></script>
+<script>
+  const {MapPool, Map, MapList, Pool} = require('elo-mappool-api');
+</script>
+```
 ## Pool:
 ```javascript
 //new Pool
