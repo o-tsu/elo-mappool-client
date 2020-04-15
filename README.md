@@ -6,10 +6,10 @@ browserify -r ./eloUploadTool.js:elo-mappool-api > test.js
 ```
 ## Pool:
 ```javascript
-//new Map
+//new Pool
 //apiResult parsed JSON from elo
 //api instance of MapPool
-returns Map
+returns Pool
 Pool.constructor(apiResult,api)
 
 //get maps in pool
