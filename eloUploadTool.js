@@ -1,8 +1,33 @@
 const node_osu = require('node-osu');
 // const { URL, URLSearchParams } = require('url');
-const param = require('jquery-param');
-// const osu = node_osu.Api
-const fetch = require('node-fetch');
+const xhr = require('./httpio');
+
+//User
+//same as node-osu User
+function User(user, api) {
+    this.id = user.id || -1;
+    this.name = user.name || 'Guest';
+    this.api = api;
+}
+User.prototype.fromNodeOsuUser = function(user, api) {
+    return new User(user, api);
+}
+User.prototype.getMyVoteOnPool = async function(pool) {
+    const results = await pool.api.getPoolVotes(pool, this);
+    return results[0] ||  {
+        vote: 0,
+        submitter: this.id,
+    }
+}
+User.prototype.upvotePool = function(pool) {
+    return pool.api.votePool(1, pool, this);
+}
+User.prototype.downvotePool = function(pool) {
+    return pool.api.votePool(-1, pool, this);
+}
+User.prototype.unvotePool = function(pool) {
+    return pool.api.votePool(0, pool, this);
+}
 
 
 function MapPool({
@@ -96,16 +121,10 @@ MapPool.prototype.validateMaps = function(list) {
 }
 
 
-
 //api 
 
-MapPool.prototype.httpReq = async function({ url, method = 'GET', params = {}, body = undefined }, onSuccess = res => res.json()) {
-    // url.search = new URLSearchParams(params).toString();
-    if (params != {}) url += `?${param(params)}`;
-    return fetch(url, {
-        method,
-        body,
-    }).then(onSuccess);
+MapPool.prototype.httpReq = async function(request, onSuccess) {
+    return xhr(request, onSuccess);
 }
 
 //api pools 
@@ -149,7 +168,7 @@ MapPool.prototype.createPool = async function({ name, submitter, creator }) {
         creator,
     });
     const result = await this.httpReq({ url, body, method: "POST" });
-    return new Pool(result,this);
+    return new Pool(result, this);
 }
 
 MapPool.prototype.editPoolByPoolName = async function({ oldName, name, status, submitter }) {
@@ -160,6 +179,26 @@ MapPool.prototype.editPoolByPoolName = async function({ oldName, name, status, s
         submitter,
     });
     const result = this.httpReq({ url, body, method: "PUT" });
+    return result;
+}
+
+
+//votes
+
+
+MapPool.prototype.getPoolVotes = function({ name }, { id = '' } = {}) {
+    const url = `${this.base}/pools/${name}/votes/${id}`
+    const result = this.httpReq({ url });
+    return result;
+}
+
+MapPool.prototype.votePool = function(upvote, pool, user) {
+    const url = `${this.base}/pools/${pool.name}/votes`
+    const body = JSON.stringify({
+        vote: upvote,
+        submitter: user.id,
+    });
+    const result = this.httpReq({ url, body, method: "POST" });
     return result;
 }
 
@@ -258,6 +297,9 @@ Pool.prototype.update = async function() {
         else throw new Error('update failed');
     });
 }
+Pool.prototype.getVotes = function() {
+    return this.api.getPoolVotes(this);
+}
 
 //map
 function Map(apiResult, pool, api) {
@@ -347,3 +389,4 @@ exports.MapPool = MapPool;
 exports.Pool = Pool;
 exports.Map = Map;
 exports.MapList = MapList;
+exports.User = User;

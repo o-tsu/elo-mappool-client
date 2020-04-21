@@ -1,4 +1,17 @@
 require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+const param = require('jquery-param');
+// const osu = node_osu.Api
+const fetch = require('node-fetch');
+
+module.exports = ({ url, method = 'GET', params = {}, body = undefined }, onSuccess = res => res.json()) => {
+    // url.search = new URLSearchParams(params).toString();
+    if (params != {}) url += `?${param(params)}`;
+    return fetch(url, {
+        method,
+        body,
+    }).then(onSuccess);
+}
+},{"jquery-param":4,"node-fetch":5}],2:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -175,7 +188,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 module.exports = stringify
 stringify.default = stringify
 stringify.stable = deterministicStringify
@@ -338,7 +351,7 @@ function replaceGetterValues (replacer) {
   }
 }
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 /**
  * @preserve jquery-param (c) 2015 KNOWLEDGECODE | MIT
  */
@@ -397,7 +410,7 @@ function replaceGetterValues (replacer) {
 
 }(this));
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -423,7 +436,7 @@ exports.Headers = global.Headers;
 exports.Request = global.Request;
 exports.Response = global.Response;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 module.exports = {
 	Api: require('./lib/Api.js'),
 	Constants: require('./lib/Constants.js'),
@@ -436,7 +449,7 @@ module.exports = {
 	Event: require('./lib/base/Event.js')
 };
 
-},{"./lib/Api.js":6,"./lib/Constants.js":7,"./lib/base/Beatmap.js":8,"./lib/base/Event.js":9,"./lib/base/Game.js":10,"./lib/base/Match.js":11,"./lib/base/MultiplayerScore.js":12,"./lib/base/Score.js":13,"./lib/base/User.js":14}],6:[function(require,module,exports){
+},{"./lib/Api.js":7,"./lib/Constants.js":8,"./lib/base/Beatmap.js":9,"./lib/base/Event.js":10,"./lib/base/Game.js":11,"./lib/base/Match.js":12,"./lib/base/MultiplayerScore.js":13,"./lib/base/Score.js":14,"./lib/base/User.js":15}],7:[function(require,module,exports){
 const request = require('superagent');
 const userAgent = `node-osu v${require('../package.json').version} (https://github.com/brussell98/node-osu)`;
 const Beatmap = require('./base/Beatmap.js');
@@ -664,7 +677,7 @@ class Api {
 
 module.exports = Api;
 
-},{"../package.json":16,"./base/Beatmap.js":8,"./base/Match.js":11,"./base/Score.js":13,"./base/User.js":14,"superagent":18}],7:[function(require,module,exports){
+},{"../package.json":17,"./base/Beatmap.js":9,"./base/Match.js":12,"./base/Score.js":14,"./base/User.js":15,"superagent":19}],8:[function(require,module,exports){
 module.exports = {
 	/**
 	 * An enum of mods with their bitwise representation
@@ -855,7 +868,7 @@ module.exports = {
 	}
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 const { getNumeric } = require('../utils.js');
 const Constants = require('../Constants.js');
 
@@ -987,7 +1000,7 @@ class Beatmap {
 
 module.exports = Beatmap;
 
-},{"../Constants.js":7,"../utils.js":15}],9:[function(require,module,exports){
+},{"../Constants.js":8,"../utils.js":16}],10:[function(require,module,exports){
 const { getNumeric } = require('../utils.js');
 
 /**
@@ -1021,7 +1034,7 @@ class Event {
 
 module.exports = Event;
 
-},{"../utils.js":15}],10:[function(require,module,exports){
+},{"../utils.js":16}],11:[function(require,module,exports){
 const MultiplayerScore = require('./MultiplayerScore.js');
 const Constants = require('../Constants.js');
 
@@ -1087,7 +1100,7 @@ class Game {
 
 module.exports = Game;
 
-},{"../Constants.js":7,"./MultiplayerScore.js":12}],11:[function(require,module,exports){
+},{"../Constants.js":8,"./MultiplayerScore.js":13}],12:[function(require,module,exports){
 const Game = require('./Game.js');
 
 /**
@@ -1129,7 +1142,7 @@ class Match {
 
 module.exports = Match;
 
-},{"./Game.js":10}],12:[function(require,module,exports){
+},{"./Game.js":11}],13:[function(require,module,exports){
 const { getNumeric } = require('../utils.js');
 const Constants = require('../Constants.js');
 
@@ -1192,7 +1205,7 @@ class MultiplayerScore {
 
 module.exports = MultiplayerScore;
 
-},{"../Constants.js":7,"../utils.js":15}],13:[function(require,module,exports){
+},{"../Constants.js":8,"../utils.js":16}],14:[function(require,module,exports){
 const { getNumeric } = require('../utils.js');
 const { Mods, AccuracyMethods } = require('../Constants.js');
 
@@ -1299,7 +1312,7 @@ class Score {
 
 module.exports = Score;
 
-},{"../Constants.js":7,"../utils.js":15}],14:[function(require,module,exports){
+},{"../Constants.js":8,"../utils.js":16}],15:[function(require,module,exports){
 const { getNumeric } = require('../utils.js');
 const Event = require('./Event.js');
 
@@ -1384,7 +1397,7 @@ class User {
 
 module.exports = User;
 
-},{"../utils.js":15,"./Event.js":9}],15:[function(require,module,exports){
+},{"../utils.js":16,"./Event.js":10}],16:[function(require,module,exports){
 module.exports = {
 	getNumeric(parseNumeric) {
 		return parseNumeric
@@ -1393,7 +1406,7 @@ module.exports = {
 	}
 };
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports={
   "_from": "node-osu@^2.2.0",
   "_id": "node-osu@2.2.0",
@@ -1456,7 +1469,7 @@ module.exports={
   "version": "2.2.0"
 }
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
@@ -1495,7 +1508,7 @@ Agent.prototype._setDefaults = function (req) {
 
 module.exports = Agent;
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2516,7 +2529,7 @@ request.put = function (url, data, fn) {
   return req;
 };
 
-},{"./agent-base":17,"./is-object":19,"./request-base":20,"./response-base":21,"component-emitter":1,"fast-safe-stringify":2}],19:[function(require,module,exports){
+},{"./agent-base":18,"./is-object":20,"./request-base":21,"./response-base":22,"component-emitter":2,"fast-safe-stringify":3}],20:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2534,7 +2547,7 @@ function isObject(obj) {
 
 module.exports = isObject;
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -3288,7 +3301,7 @@ RequestBase.prototype._setTimeouts = function () {
   }
 };
 
-},{"./is-object":19}],21:[function(require,module,exports){
+},{"./is-object":20}],22:[function(require,module,exports){
 "use strict";
 
 /**
@@ -3420,7 +3433,7 @@ ResponseBase.prototype._setStatusProperties = function (status) {
   this.unprocessableEntity = status === 422;
 };
 
-},{"./utils":22}],22:[function(require,module,exports){
+},{"./utils":23}],23:[function(require,module,exports){
 "use strict";
 
 /**
@@ -3495,9 +3508,34 @@ exports.cleanHeader = function (header, changesOrigin) {
 },{}],"elo-mappool-api":[function(require,module,exports){
 const node_osu = require('node-osu');
 // const { URL, URLSearchParams } = require('url');
-const param = require('jquery-param');
-// const osu = node_osu.Api
-const fetch = require('node-fetch');
+const xhr = require('./httpio');
+
+//User
+//same as node-osu User
+function User(user, api) {
+    this.id = user.id || -1;
+    this.name = user.name || 'Guest';
+    this.api = api;
+}
+User.prototype.fromNodeOsuUser = function(user, api) {
+    return new User(user, api);
+}
+User.prototype.getMyVoteOnPool = async function(pool) {
+    const results = await pool.api.getPoolVotes(pool, this);
+    return results[0] ||  {
+        vote: 0,
+        submitter: this.id,
+    }
+}
+User.prototype.upvotePool = function(pool) {
+    return pool.api.votePool(1, pool, this);
+}
+User.prototype.downvotePool = function(pool) {
+    return pool.api.votePool(-1, pool, this);
+}
+User.prototype.unvotePool = function(pool) {
+    return pool.api.votePool(0, pool, this);
+}
 
 
 function MapPool({
@@ -3591,16 +3629,10 @@ MapPool.prototype.validateMaps = function(list) {
 }
 
 
-
 //api 
 
-MapPool.prototype.httpReq = async function({ url, method = 'GET', params = {}, body = undefined }, onSuccess = res => res.json()) {
-    // url.search = new URLSearchParams(params).toString();
-    if (params != {}) url += `?${param(params)}`;
-    return fetch(url, {
-        method,
-        body,
-    }).then(onSuccess);
+MapPool.prototype.httpReq = async function(request, onSuccess) {
+    return xhr(request, onSuccess);
 }
 
 //api pools 
@@ -3644,7 +3676,7 @@ MapPool.prototype.createPool = async function({ name, submitter, creator }) {
         creator,
     });
     const result = await this.httpReq({ url, body, method: "POST" });
-    return new Pool(result,this);
+    return new Pool(result, this);
 }
 
 MapPool.prototype.editPoolByPoolName = async function({ oldName, name, status, submitter }) {
@@ -3655,6 +3687,26 @@ MapPool.prototype.editPoolByPoolName = async function({ oldName, name, status, s
         submitter,
     });
     const result = this.httpReq({ url, body, method: "PUT" });
+    return result;
+}
+
+
+//votes
+
+
+MapPool.prototype.getPoolVotes = function({ name }, { id = '' } = {}) {
+    const url = `${this.base}/pools/${name}/votes/${id}`
+    const result = this.httpReq({ url });
+    return result;
+}
+
+MapPool.prototype.votePool = function(upvote, pool, user) {
+    const url = `${this.base}/pools/${pool.name}/votes`
+    const body = JSON.stringify({
+        vote: upvote,
+        submitter: user.id,
+    });
+    const result = this.httpReq({ url, body, method: "POST" });
     return result;
 }
 
@@ -3753,6 +3805,9 @@ Pool.prototype.update = async function() {
         else throw new Error('update failed');
     });
 }
+Pool.prototype.getVotes = function() {
+    return this.api.getPoolVotes(this);
+}
 
 //map
 function Map(apiResult, pool, api) {
@@ -3842,4 +3897,5 @@ exports.MapPool = MapPool;
 exports.Pool = Pool;
 exports.Map = Map;
 exports.MapList = MapList;
-},{"jquery-param":3,"node-fetch":4,"node-osu":5}]},{},[]);
+exports.User = User;
+},{"./httpio":1,"node-osu":6}]},{},[]);
