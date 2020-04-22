@@ -302,7 +302,7 @@ Pool.prototype.getVotes = function() {
 }
 
 //map
-function Map(apiResult, pool, api) {
+function EloMap(apiResult, pool, api) {
     try {
         this.mapping(apiResult);
         this.pool = pool;
@@ -312,7 +312,7 @@ function Map(apiResult, pool, api) {
     }
 }
 
-Map.prototype.toApiStruct = function() {
+EloMap.prototype.toApiStruct = function() {
     return {
         map_id: this.id,
         mod: this.mod,
@@ -322,7 +322,7 @@ Map.prototype.toApiStruct = function() {
     }
 }
 
-Map.prototype.mapping = function(apiResult) {
+EloMap.prototype.mapping = function(apiResult) {
     this.id = apiResult.map_id;
     this.mod = apiResult.mod;
     this.index = apiResult.mod_index;
@@ -330,7 +330,7 @@ Map.prototype.mapping = function(apiResult) {
     this.selector = apiResult.selector;
 }
 
-Map.prototype.update = function() {
+EloMap.prototype.update = function() {
     try {
         this.api.deleteMapFromPool(this, this.pool);
         return this.api.uploadMapsIntoPool([this], this.pool);
@@ -339,7 +339,7 @@ Map.prototype.update = function() {
     }
 }
 
-Map.prototype.delete = async function() {
+EloMap.prototype.delete = async function() {
     return this.api.deleteMapFromPool(this, this.pool)
 }
 
@@ -356,7 +356,7 @@ MapList.prototype.addMap = function(map) {
         return this.maps.push(map);
     } else {
         try {
-            return this.maps.push(new Map(map, this.pool, this, api));
+            return this.maps.push(new EloMap(map, this.pool, this, api));
         } catch (error) {
             throw new Error('not a Map instance')
         }
@@ -377,7 +377,7 @@ MapList.prototype.deleteAll = function() {
 MapList.prototype.duplicate = function() {
     const copy = JSON.parse(JSON.stringify(this.maps));
     copy.map(map => {
-        map.__proto__ = Map.prototype;
+        map.__proto__ = EloMap.prototype;
         map.pool = this.pool;
         map.api = this.api;
     });
@@ -387,6 +387,6 @@ MapList.prototype.duplicate = function() {
 
 exports.MapPool = MapPool;
 exports.Pool = Pool;
-exports.Map = Map;
+exports.EloMap = EloMap;
 exports.MapList = MapList;
 exports.User = User;
