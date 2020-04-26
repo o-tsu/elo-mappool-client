@@ -1,8 +1,7 @@
-const nodeOsu = require('node-osu')
-export class EloMap extends nodeOsu.Beatmap {
+const cloneDeep = require('lodash.clonedeep')
+export class EloMap {
   constructor (apiResult, pool, api) {
     try {
-      super()
       this.mapping(apiResult)
       this.pool = pool
       this.api = api
@@ -30,8 +29,8 @@ export class EloMap extends nodeOsu.Beatmap {
     this.selector = apiResult.selector
   }
 
-  duplicate(){
-    return new EloMap(this.toApiStruct(),this.pool,this.api);
+  duplicate () {
+    return new EloMap(this.toApiStruct(), this.pool, this.api)
   }
 
   async update () {
@@ -45,19 +44,19 @@ export class EloMap extends nodeOsu.Beatmap {
 
   async delete () {
     return this.api.deleteMapFromPool(this, this.pool)
-  } 
+  }
 
   async banchoResult () {
-    await Object.assign(await this.api.apiGetResult(this), this);
-    this.banchoResultReady = true;
+    await Object.assign(cloneDeep(await this.api.apiGetResult(this)), this)
+    this.banchoResultReady = true
   }
 
   async autoComplete () {
-    if (this.api.autoComplete){
-        const result = this.api.validateMap(this)
-        if (!result.complete) {
-          await this.banchoResult()
-        }
+    if (this.api.autoComplete) {
+      const result = this.api.validateMap(this)
+      if (!result.complete) {
+        await this.banchoResult()
       }
+    }
   }
 }
