@@ -1,4 +1,5 @@
 const { Pool } = require('./Pool')
+const { EloMap } = require('./EloMap')
 const { MapList } = require('./MapList')
 
 const xhr = require('./httpio')
@@ -202,7 +203,7 @@ export class MapPool {
     // const params = { map_id: id };
     const result = await this.httpReq({ url })
     // return result
-    return result.map(map => new map(map, pool, this))
+    return result.map(map => new EloMap(map, pool, this))
   }
 
   async getMapInPool ({ id }, pool) {
