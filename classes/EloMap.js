@@ -2,6 +2,7 @@ const nodeOsu = require('node-osu')
 export class EloMap extends nodeOsu.Beatmap {
   constructor (apiResult, pool, api) {
     try {
+      super()
       this.mapping(apiResult)
       this.pool = pool
       this.api = api
