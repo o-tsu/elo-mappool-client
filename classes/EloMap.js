@@ -47,7 +47,7 @@ export class EloMap {
   }
 
   async banchoResult () {
-    await Object.assign(this,await this.api.apiGetMap(this))
+    await Object.assign(this, await this.api.apiGetMap(this))
     Object.defineProperty(this, 'submitDate', {
       get: function () {
         if (this._submitDate !== undefined) { return this._submitDate }

@@ -7,7 +7,8 @@ const nodeOsu = require('node-osu')
 
 export class MapPool {
   constructor ({
-    apiBase = `http://47.101.168.165:5004`,
+    apiBase = 'http://47.101.168.165:5004',
+    memoize = null,
     autoComplete = false,
     sample = {
       id: null,
@@ -37,6 +38,9 @@ export class MapPool {
     this.base = apiBase
     this.autoComplete = autoComplete
     this.sample = sample
+    if (memoize === 'nodejs') {
+      // todo
+    }
   }
 
   // sync -----------------------------------------------------------
@@ -211,6 +215,7 @@ export class MapPool {
     const result = this.httpReq({ url })
     return result
   }
+
   async uploadMapsIntoPool (maps, pool) {
     const list = new MapList(maps, pool, this)
     return this.uploadMapListIntoPool(list, pool)
