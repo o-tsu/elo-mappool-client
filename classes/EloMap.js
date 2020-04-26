@@ -27,6 +27,10 @@ export class EloMap {
     this.selector = apiResult.selector
   }
 
+  duplicate(){
+    return new EloMap(this.toApiStruct(),this.pool,this.api);
+  }
+
   async update () {
     try {
       this.api.deleteMapFromPool(this, this.pool)

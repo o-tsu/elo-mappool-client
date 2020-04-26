@@ -34,12 +34,8 @@ export class MapList {
     return result
   }
   duplicate () {
-    const copy = JSON.parse(JSON.stringify(this.maps))
-    copy.map(map => {
-      map = Object.setPrototypeOf(map, EloMap.prototype)
-      map.pool = this.pool
-      map.api = this.api
-    })
+    // const copy = JSON.parse(JSON.stringify(this.maps))
+    const copy = this.maps.map(map => map.duplicate())
 
     return new MapList(copy, this.pool, this.api)
   }
