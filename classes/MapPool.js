@@ -40,12 +40,6 @@ export class MapPool {
 
   // sync -----------------------------------------------------------
 
-  apiGetMap (mapped) {
-    // console.log(mapped);
-    return fetch(`http://47.101.168.165:5005/api/map/${mapped.id}`).then(res => res.json()).then(res => res[0]).then(res => new nodeOsu.Beatmap({ parseNumeric: true }, res))
-    // return this.bancho.getBeatmaps({ b: mapped.id }).then(result => result[0]).catch(e => Promise.resolve(mapped));
-  }
-
   mapping (map) {
     return JSON.parse(JSON.stringify(Object.assign(this.sample, {
       id: map.map_id || null,
@@ -83,14 +77,16 @@ export class MapPool {
     return list.map((map) => this.validateMap(map))
   }
 
+  // async -----------------------------------------------------------
+
   // votes
-  getPoolVotes ({ name }, { id = '' } = {}) {
+  async getPoolVotes ({ name }, { id = '' } = {}) {
     const url = `${this.base}/pools/${name}/votes/${id}`
     const result = this.httpReq({ url })
     return result
   }
 
-  votePool (upvote, pool, user) {
+  async votePool (upvote, pool, user) {
     const url = `${this.base}/pools/${pool.name}/votes`
     const body = JSON.stringify({
       vote: upvote,
@@ -100,7 +96,11 @@ export class MapPool {
     return result
   }
 
-  // async -----------------------------------------------------------
+  async apiGetMap (mapped) {
+    // console.log(mapped);
+    return fetch(`http://47.101.168.165:5005/api/map/${mapped.id}`).then(res => res.json()).then(res => res[0]).then(res => new nodeOsu.Beatmap({ parseNumeric: true }, res))
+    // return this.bancho.getBeatmaps({ b: mapped.id }).then(result => result[0]).catch(e => Promise.resolve(mapped));
+  }
 
   async httpReq (request, onSuccess) {
     return xhr(request, onSuccess)

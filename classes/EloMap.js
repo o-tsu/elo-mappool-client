@@ -27,7 +27,7 @@ export class EloMap {
     this.selector = apiResult.selector
   }
 
-  update () {
+  async update () {
     try {
       this.api.deleteMapFromPool(this, this.pool)
       return this.api.uploadMapsIntoPool([this], this.pool)

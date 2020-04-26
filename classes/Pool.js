@@ -25,11 +25,11 @@ export class Pool {
     this.cover = res.cover
   }
 
-  getVotes () {
+  // asnyc-------------------------------------------------------
+
+  async getVotes () {
     return this.api.getPoolVotes(this)
   }
-
-  // asnyc-------------------------------------------------------
 
   async getMaps () {
     this.maps = new MapList(await this.api.getMapsInPool(this), this, this.api)
