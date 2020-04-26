@@ -201,8 +201,8 @@ export class MapPool {
     const url = `${this.base}/pools/${pool.name}/maps`
     // const params = { map_id: id };
     const result = await this.httpReq({ url })
-    return result
-    // return result.map(map => new map(map, pool, this))
+    // return result
+    return result.map(map => new map(map, pool, this))
   }
 
   async getMapInPool ({ id }, pool) {
