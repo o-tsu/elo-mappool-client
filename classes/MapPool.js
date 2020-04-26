@@ -136,7 +136,10 @@ export class MapPool {
   }
 
   async getPool ({ name }) {
-    return fetch(`${this.base}/pools/${name}`).then(res => res.json()).then(res => new Pool(res, this))
+    return fetch(`${this.base}/pools/${name}`).then(res => res.json()).then(res => {
+      if (!res) throw new Error('未找到此地图，或api暂时无法访问')
+      return new Pool(res, this)
+    })
   }
 
   async deletePoolByPoolName ({ name, submitter }) {
