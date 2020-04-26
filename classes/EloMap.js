@@ -12,12 +12,16 @@ export class EloMap {
   }
 
   toApiStruct () {
+    return EloMap.toApiStructStatic(this)
+  }
+
+  static toApiStructStatic (map) {
     return {
-      map_id: this.id,
-      mod: this.mod,
-      mod_index: this.index,
-      stage: this.stage,
-      selector: this.selector
+      map_id: map.id,
+      mod: map.mod,
+      mod_index: map.index,
+      stage: map.stage,
+      selector: map.selector
     }
   }
 
@@ -31,6 +35,11 @@ export class EloMap {
 
   duplicate () {
     return new EloMap(this.toApiStruct(), this.pool, this.api)
+  }
+
+  static create (map, pool, api) {
+    const apiResult = EloMap.toApiStructStatic(map)
+    return new EloMap(apiResult, pool, api)
   }
 
   async update () {
