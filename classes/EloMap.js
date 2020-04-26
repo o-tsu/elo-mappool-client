@@ -1,5 +1,5 @@
 export class EloMap {
-  constructor(apiResult, pool, api) {
+  constructor (apiResult, pool, api) {
     try {
       this.mapping(apiResult)
       this.pool = pool
@@ -11,7 +11,7 @@ export class EloMap {
     }
   }
 
-  toApiStruct() {
+  toApiStruct () {
     return {
       map_id: this.id,
       mod: this.mod,
@@ -21,7 +21,7 @@ export class EloMap {
     }
   }
 
-  mapping(apiResult) {
+  mapping (apiResult) {
     this.id = apiResult.map_id
     this.mod = apiResult.mod
     this.index = apiResult.mod_index
@@ -29,11 +29,11 @@ export class EloMap {
     this.selector = apiResult.selector
   }
 
-  duplicate() {
+  duplicate () {
     return new EloMap(this.toApiStruct(), this.pool, this.api)
   }
 
-  async update() {
+  async update () {
     try {
       this.api.deleteMapFromPool(this, this.pool)
       return this.api.uploadMapsIntoPool([this], this.pool)
@@ -42,43 +42,40 @@ export class EloMap {
     }
   }
 
-  async delete() {
+  async delete () {
     return this.api.deleteMapFromPool(this, this.pool)
   }
 
-  async banchoResult() {
-    await Object.assign(await this.api.apiGetResult(this), this)
+  async banchoResult () {
+    await Object.assign(await this.api.apiGetMap(this), this)
     Object.defineProperty(this, 'submitDate', {
-      get: function() {
-        if (this._submitDate !== undefined)
-          return this._submitDate;
+      get: function () {
+        if (this._submitDate !== undefined) { return this._submitDate }
 
-        this._submitDate = new Date(this.raw_submitDate + ' UTC');
-        return this._submitDate;
+        this._submitDate = new Date(this.raw_submitDate + ' UTC')
+        return this._submitDate
       }
     })
     Object.defineProperty(this, 'approvedDate', {
-      get: function() {
-        if (this._approvedDate !== undefined)
-          return this._approvedDate;
+      get: function () {
+        if (this._approvedDate !== undefined) { return this._approvedDate }
 
-        this._approvedDate = this.raw_approvedDate ? new Date(this.raw_approvedDate + ' UTC') : null;
-        return this._approvedDate;
+        this._approvedDate = this.raw_approvedDate ? new Date(this.raw_approvedDate + ' UTC') : null
+        return this._approvedDate
       }
     })
     Object.defineProperty(this, 'lastUpdate', {
-      get: function() {
-        if (this._lastUpdate !== undefined)
-          return this._lastUpdate;
+      get: function () {
+        if (this._lastUpdate !== undefined) { return this._lastUpdate }
 
-        this._lastUpdate = new Date(this.raw_lastUpdate + ' UTC');
-        return this._lastUpdate;
+        this._lastUpdate = new Date(this.raw_lastUpdate + ' UTC')
+        return this._lastUpdate
       }
     })
     this.banchoResultReady = true
   }
 
-  async autoComplete() {
+  async autoComplete () {
     if (this.api.autoComplete) {
       const result = this.api.validateMap(this)
       if (!result.complete) {
@@ -86,5 +83,4 @@ export class EloMap {
       }
     }
   }
-
 }
