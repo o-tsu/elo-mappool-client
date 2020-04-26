@@ -5,6 +5,7 @@ export class EloMap {
       this.pool = pool
       this.api = api
       this.banchoResultReady = false
+      this.autoComplete()
     } catch (error) {
       throw error
     }
