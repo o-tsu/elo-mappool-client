@@ -1,9 +1,11 @@
-export class EloMap {
+const nodeOsu = require('node-osu')
+export class EloMap extends nodeOsu.Beatmap {
   constructor (apiResult, pool, api) {
     try {
       this.mapping(apiResult)
       this.pool = pool
       this.api = api
+      this.banchoResultReady = false
     } catch (error) {
       throw error
     }
@@ -42,5 +44,19 @@ export class EloMap {
 
   async delete () {
     return this.api.deleteMapFromPool(this, this.pool)
+  } 
+
+  async banchoResult () {
+    await Object.assign(await this.api.apiGetResult(this), this);
+    this.banchoResultReady = true;
+  }
+
+  async autoComplete () {
+    if (this.api.autoComplete){
+        const result = this.api.validateMap(this)
+        if (!result.complete) {
+          await this.banchoResult()
+        }
+      }
   }
 }
