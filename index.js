@@ -8,10 +8,8 @@ import { Pool } from './classes/Pool'
 import { EloMap } from './classes/EloMap'
 import { MapList } from './classes/MapList'
 
-module.export = {
-  User,
-  MapPool,
-  Pool,
-  EloMap,
-  MapList
-}
+exports.User = User
+exports.MapPool = MapPool
+exports.Pool = Pool
+exports.EloMap = EloMap
+exports.MapList = MapList

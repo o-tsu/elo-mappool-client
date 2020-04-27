@@ -21,7 +21,9 @@ class Pool {
       status: this.status,
       description: this.description,
       recommendElo: this.recommendElo,
-      cover: this.cover
+      cover: this.cover,
+      rating: this.avg_rating,
+      ratingCount: this.num_of_rating
     }
   }
 
@@ -36,6 +38,8 @@ class Pool {
     this.description = res.description
     this.recommendElo = res.recommend_elo
     this.cover = res.cover
+    this.rating = res.avg_rating
+    this.ratingCount = res.num_of_rating
   }
 
   // asnyc-------------------------------------------------------
