@@ -1,9 +1,8 @@
 import $axios from './requester'
 
-const { Pool } = require('./Pool')
-const { EloMap } = require('./EloMap')
-const { MapList } = require('./MapList')
-const { EloMap } = require('./EloMap')
+import { Pool } from './classes/Pool'
+import { EloMap } from './classes/EloMap'
+import { MapList } from './classes/MapList'
 
 const nodeOsu = require('node-osu')
 
