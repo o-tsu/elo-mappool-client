@@ -139,11 +139,11 @@ export class MapPool {
       }
       */
   async getPools () {
-    return $axios.get(`${this.base}/pools/`).then(res => res.data).then(res => res.map(pool => new Pool(pool, this)))
+    return this.httpReq(`${this.base}/pools/`).then(res => res.map(pool => new Pool(pool, this)))
   }
 
   async getPool ({ name }) {
-    return $axios.get(`${this.base}/pools/${name}`).then(res => res.data).then(res => {
+    return this.httpReq(`${this.base}/pools/${name}`).then(res => {
       if (!res) throw new Error('未找到此地图，或api暂时无法访问')
       return new Pool(res, this)
     })
