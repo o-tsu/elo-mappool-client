@@ -1,8 +1,9 @@
+import $axios from './requester'
+
 const { Pool } = require('./Pool')
 const { MapList } = require('./MapList')
 const { EloMap } = require('./EloMap')
 
-const xhr = require('./httpio')
 const nodeOsu = require('node-osu')
 
 export class MapPool {
@@ -43,7 +44,8 @@ export class MapPool {
 
   apiGetMap (mapped) {
     // console.log(mapped);
-    return fetch(`http://47.101.168.165:5005/api/map/${mapped.id}`).then(res => res.json()).then(res => res[0]).then(res => new nodeOsu.Beatmap({ parseNumeric: true }, res))
+    return $axios.get(`http://47.101.168.165:5005/api/map/${mapped.id}`
+    ).then(res => res.data[0]).then(res => new nodeOsu.Beatmap({ parseNumeric: true }, res))
     // return this.bancho.getBeatmaps({ b: mapped.id }).then(result => result[0]).catch(e => Promise.resolve(mapped));
   }
 
@@ -93,18 +95,19 @@ export class MapPool {
 
   votePool (upvote, pool, user) {
     const url = `${this.base}/pools/${pool.name}/votes`
-    const body = JSON.stringify({
+    const data = {
       vote: upvote,
       submitter: user.id
-    })
-    const result = this.httpReq({ url, body, method: 'POST' })
+    }
+    const result = this.httpReq({ url, data, method: 'POST' })
     return result
   }
 
   // async -----------------------------------------------------------
 
-  async httpReq (request, onSuccess) {
-    return xhr(request, onSuccess)
+  // request = { url, method: 'GET', params: {}, data: {} }
+  async httpReq (request) {
+    return $axios(request).then(res => res.data)
   }
 
   async toNodeOsuBeatmap (map) {
@@ -133,11 +136,11 @@ export class MapPool {
       }
       */
   async getPools () {
-    return fetch(`${this.base}/pools/`).then(res => res.json()).then(res => res.map(pool => new Pool(pool, this)))
+    return $axios.get(`${this.base}/pools/`).then(res => res.data).then(res => res.map(pool => new Pool(pool, this)))
   }
 
   async getPool ({ name }) {
-    return fetch(`${this.base}/pools/${name}`).then(res => res.json()).then(res => {
+    return $axios.get(`${this.base}/pools/${name}`).then(res => res.data).then(res => {
       if (!res) throw new Error('未找到此地图，或api暂时无法访问')
       return new Pool(res, this)
     })
@@ -154,32 +157,32 @@ export class MapPool {
 
   // async deletePoolByPoolId ({ id, submitter }) {
   //     const url = `${this.base}/pools/`;
-  //     const body = JSON.stringify({
+  //     const data = {
   //         id,
   //         submitter,
-  //     });
-  //     const result = this.httpReq({ url, body, method: "DELETE" });
+  //     }
+  //     const result = this.httpReq({ url, data, method: "DELETE" });
   //     return result;
   // }
 
   async createPool ({ name, submitter, creator }) {
     const url = `${this.base}/pools/${name}`
-    const body = JSON.stringify({
+    const data = {
       submitter,
       creator
-    })
-    const result = await this.httpReq({ url, body, method: 'POST' })
+    }
+    const result = await this.httpReq({ url, data, method: 'POST' })
     return new Pool(result, this)
   }
 
   async editPoolByPoolName ({ oldName, name, status, submitter }) {
     const url = `${this.base}/pools/${oldName}`
-    const body = JSON.stringify({
+    const data = {
       mappool_name: name,
       status,
       submitter
-    })
-    const result = this.httpReq({ url, body, method: 'PUT' })
+    }
+    const result = this.httpReq({ url, data, method: 'PUT' })
     return result
   }
 
@@ -231,8 +234,8 @@ export class MapPool {
       maps: mapList.toApiStruct(),
       submitter: pool.submitter
     }
-    const body = JSON.stringify(struct)
-    const result = this.httpReq({ url, body, method: 'POST' })
+    const data = struct
+    const result = this.httpReq({ url, data, method: 'POST' })
     return result
   }
 
