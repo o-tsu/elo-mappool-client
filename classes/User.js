@@ -13,19 +13,19 @@ class User {
     return new User(user, api)
   }
 
-  upvotePool (pool) {
+  // async-----------------------------------------------
+
+  async upvotePool (pool) {
     return pool.api.votePool(1, pool, this)
   }
 
-  downvotePool (pool) {
+  async downvotePool (pool) {
     return pool.api.votePool(-1, pool, this)
   }
 
-  unvotePool (pool) {
+  async unvotePool (pool) {
     return pool.api.votePool(0, pool, this)
   }
-
-  // async-----------------------------------------------
 
   async getMyVoteOnPool (pool) {
     const results = await pool.api.getPoolVotes(pool, this)

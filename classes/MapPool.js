@@ -1,14 +1,15 @@
 import $axios from './requester'
 
-const { Pool } = require('./Pool')
-const { MapList } = require('./MapList')
-const { EloMap } = require('./EloMap')
+import { Pool } from './classes/Pool'
+import { EloMap } from './classes/EloMap'
+import { MapList } from './classes/MapList'
 
 const nodeOsu = require('node-osu')
 
 class MapPool {
   constructor ({
-    apiBase = `http://47.101.168.165:5004`,
+    apiBase = 'http://47.101.168.165:5004',
+    memoize = null,
     autoComplete = false,
     sample = {
       id: null,
@@ -38,17 +39,13 @@ class MapPool {
     this.base = apiBase
     this.autoComplete = autoComplete
     this.sample = sample
+    if (memoize === 'nodejs') {
+      // todo
+    }
   }
 
   // sync -----------------------------------------------------------
-
-  apiGetMap (mapped) {
-    // console.log(mapped);
-    return $axios.get(`http://47.101.168.165:5005/api/map/${mapped.id}`
-    ).then(res => res.data[0]).then(res => new nodeOsu.Beatmap({ parseNumeric: true }, res))
-    // return this.bancho.getBeatmaps({ b: mapped.id }).then(result => result[0]).catch(e => Promise.resolve(mapped));
-  }
-
+  
   mapping (map) {
     return JSON.parse(JSON.stringify(Object.assign(this.sample, {
       id: map.map_id || null,
@@ -86,14 +83,16 @@ class MapPool {
     return list.map((map) => this.validateMap(map))
   }
 
+  // async -----------------------------------------------------------
+
   // votes
-  getPoolVotes ({ name }, { id = '' } = {}) {
+  async getPoolVotes ({ name }, { id = '' } = {}) {
     const url = `${this.base}/pools/${name}/votes/${id}`
     const result = this.httpReq({ url })
     return result
   }
 
-  votePool (upvote, pool, user) {
+  async votePool (upvote, pool, user) {
     const url = `${this.base}/pools/${pool.name}/votes`
     const data = {
       vote: upvote,
@@ -103,7 +102,10 @@ class MapPool {
     return result
   }
 
-  // async -----------------------------------------------------------
+  async apiGetMap (mapped) {
+    return $axios.get(`http://47.101.168.165:5005/api/map/${mapped.id}`
+    ).then(res => res.data[0]).then(res => new nodeOsu.Beatmap({ parseNumeric: true }, res))
+  }
 
   // request = { url, method: 'GET', params: {}, data: {} }
   async httpReq (request) {
@@ -136,11 +138,11 @@ class MapPool {
       }
       */
   async getPools () {
-    return $axios.get(`${this.base}/pools/`).then(res => res.data).then(res => res.map(pool => new Pool(pool, this)))
+    return this.httpReq(`${this.base}/pools/`).then(res => res.map(pool => new Pool(pool, this)))
   }
 
   async getPool ({ name }) {
-    return $axios.get(`${this.base}/pools/${name}`).then(res => res.data).then(res => {
+    return this.httpReq(`${this.base}/pools/${name}`).then(res => {
       if (!res) throw new Error('未找到此地图，或api暂时无法访问')
       return new Pool(res, this)
     })
@@ -214,6 +216,7 @@ class MapPool {
     const result = this.httpReq({ url })
     return result
   }
+
   async uploadMapsIntoPool (maps, pool) {
     const list = new MapList(maps, pool, this)
     return this.uploadMapListIntoPool(list, pool)

@@ -1,4 +1,4 @@
-const { EloMap } = require('./EloMap')
+import { EloMap } from './EloMap'
 
 class MapList {
   constructor (maps, pool, api) {
@@ -11,6 +11,7 @@ class MapList {
     return this.maps.map(beatmap => beatmap.toApiStruct())
   }
 
+
   addMap (beatmap) {
     if (beatmap instanceof Map) {
       return this.maps.push(beatmap)
@@ -22,6 +23,7 @@ class MapList {
       }
     }
   }
+
   diff (newMapList) {
     const notInBoth = newMapList.maps.filter(beatmap => !this.maps.includes(beatmap)).concat(this.maps.filter(beatmap => !newMapList.maps.includes(beatmap)))
     return new MapList(notInBoth, this.pool, this.api)
