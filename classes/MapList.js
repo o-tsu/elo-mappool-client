@@ -1,4 +1,4 @@
-const { EloMap } = require('./EloMap')
+import { EloMap } from './EloMap'
 
 export class MapList {
   constructor (maps, pool, api) {
