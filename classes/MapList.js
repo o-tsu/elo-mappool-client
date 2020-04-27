@@ -11,7 +11,6 @@ class MapList {
     return this.maps.map(beatmap => beatmap.toApiStruct())
   }
 
-
   addMap (beatmap) {
     if (beatmap instanceof Map) {
       return this.maps.push(beatmap)

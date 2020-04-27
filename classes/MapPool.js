@@ -45,7 +45,7 @@ class MapPool {
   }
 
   // sync -----------------------------------------------------------
-  
+
   mapping (map) {
     return JSON.parse(JSON.stringify(Object.assign(this.sample, {
       id: map.map_id || null,
