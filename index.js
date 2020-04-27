@@ -9,9 +9,9 @@ import { EloMap } from './classes/EloMap'
 import { MapList } from './classes/MapList'
 
 module.export = {
-	User,
-	MapPool,
-	Pool,
-	EloMap,
-	MapList,
+  User,
+  MapPool,
+  Pool,
+  EloMap,
+  MapList
 }
