@@ -8,15 +8,16 @@ export class MapList {
   }
 
   toApiStruct () {
-    return this.maps.map(map => map.toApiStruct())
+    return this.maps.map(beatmap => beatmap.toApiStruct())
   }
 
-  addMap (map) {
-    if (map instanceof Map) {
-      return this.maps.push(map)
+
+  addMap (beatmap) {
+    if (beatmap instanceof Map) {
+      return this.maps.push(beatmap)
     } else {
       try {
-        return this.maps.push(new EloMap(map, this.pool, this.api))
+        return this.maps.push(new EloMap(beatmap, this.pool, this.api))
       } catch (error) {
         throw new Error('not a Map instance')
       }
@@ -24,7 +25,7 @@ export class MapList {
   }
 
   diff (newMapList) {
-    const notInBoth = newMapList.maps.filter(map => !this.maps.includes(map)).concat(this.maps.filter(map => !newMapList.maps.includes(map)))
+    const notInBoth = newMapList.maps.filter(beatmap => !this.maps.includes(beatmap)).concat(this.maps.filter(beatmap => !newMapList.maps.includes(beatmap)))
     return new MapList(notInBoth, this.pool, this.api)
   }
 
@@ -33,7 +34,7 @@ export class MapList {
   }
 
   deleteAll () {
-    const result = this.maps.map(map => map.delete())
+    const result = this.maps.map(beatmap => beatmap.delete())
     this.maps = []
     return result
   }

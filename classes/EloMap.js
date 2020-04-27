@@ -37,6 +37,7 @@ export class EloMap {
     return new EloMap(this.toApiStruct(), this.pool, this.api)
   }
 
+
   static create (map, pool, api) {
     const apiResult = EloMap.toApiStructStatic(map)
     return new EloMap(apiResult, pool, api)
