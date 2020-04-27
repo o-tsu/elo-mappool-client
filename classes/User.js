@@ -1,6 +1,6 @@
 // User
 // same as node-osu User
-export class User {
+class User {
   constructor (user, api) {
     this.id = user.id || -1
     this.name = user.name || 'Guest'
@@ -35,3 +35,5 @@ export class User {
     }
   }
 }
+
+exports.User = User

@@ -1,6 +1,6 @@
 import { MapList } from './MapList'
 
-export class Pool {
+class Pool {
   constructor (res, api) {
     try {
       this.mapping(res)
@@ -11,6 +11,19 @@ export class Pool {
   }
 
   // sync-------------------------------------------------------
+
+  getData () {
+    return {
+      id: this.id,
+      name: this.name,
+      submitter: this.submitter,
+      creator: this.creator,
+      status: this.status,
+      description: this.description,
+      recommendElo: this.recommendElo,
+      cover: this.cover
+    }
+  }
 
   // res = api data(jsonify)
   mapping (res) {
@@ -52,3 +65,5 @@ export class Pool {
     })
   }
 }
+
+exports.Pool = Pool

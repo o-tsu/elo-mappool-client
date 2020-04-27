@@ -1,6 +1,6 @@
 const { EloMap } = require('./EloMap')
 
-export class MapList {
+class MapList {
   constructor (maps, pool, api) {
     this.maps = maps
     this.pool = pool
@@ -49,3 +49,5 @@ export class MapList {
     return this
   }
 }
+
+exports.MapList = MapList

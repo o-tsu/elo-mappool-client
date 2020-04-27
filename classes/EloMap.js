@@ -1,4 +1,4 @@
-export class EloMap {
+class EloMap {
   constructor (apiResult, pool, api) {
     try {
       this.mapping(apiResult)
@@ -84,3 +84,5 @@ export class EloMap {
     }
   }
 }
+
+exports.EloMap = EloMap
