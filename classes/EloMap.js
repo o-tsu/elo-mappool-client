@@ -1,4 +1,4 @@
-export class EloMap {
+class EloMap {
   constructor (apiResult, pool, api) {
     try {
       this.mapping(apiResult)
@@ -36,7 +36,6 @@ export class EloMap {
   duplicate () {
     return new EloMap(this.toApiStruct(), this.pool, this.api)
   }
-
 
   static create (map, pool, api) {
     const apiResult = EloMap.toApiStructStatic(map)
@@ -94,3 +93,5 @@ export class EloMap {
     }
   }
 }
+
+exports.EloMap = EloMap

@@ -1,6 +1,6 @@
 import { EloMap } from './EloMap'
 
-export class MapList {
+class MapList {
   constructor (maps, pool, api) {
     this.maps = maps
     this.pool = pool
@@ -10,7 +10,6 @@ export class MapList {
   toApiStruct () {
     return this.maps.map(beatmap => beatmap.toApiStruct())
   }
-
 
   addMap (beatmap) {
     if (beatmap instanceof Map) {
@@ -51,3 +50,5 @@ export class MapList {
     return this
   }
 }
+
+exports.MapList = MapList

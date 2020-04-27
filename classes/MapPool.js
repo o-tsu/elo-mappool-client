@@ -6,7 +6,7 @@ import { MapList } from './classes/MapList'
 
 const nodeOsu = require('node-osu')
 
-export class MapPool {
+class MapPool {
   constructor ({
     apiBase = 'http://47.101.168.165:5004',
     memoize = null,
@@ -45,10 +45,10 @@ export class MapPool {
   }
 
   // sync -----------------------------------------------------------
-  
+
   mapping (map) {
     return JSON.parse(JSON.stringify(Object.assign(this.sample, {
-      id: map.id || null,
+      id: map.map_id || null,
       title: map.map_title || undefined,
       creator: map.map_creator || undefined,
       artist: map.map_artist || undefined,
@@ -251,3 +251,5 @@ export class MapPool {
     return result
   }
 }
+
+exports.MapPool = MapPool
