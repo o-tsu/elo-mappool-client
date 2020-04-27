@@ -1,4 +1,3 @@
-// User
 // same as node-osu User
 class User {
   constructor (user, api) {
