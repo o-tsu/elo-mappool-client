@@ -32,7 +32,8 @@ export class Pool {
   // asnyc-------------------------------------------------------
 
   async getMaps () {
-    this.maps = new MapList(await this.api.getMapsInPool(this), this, this.api)
+    const pool = await this.api.getMapsInPool(this)
+    this.maps = new MapList(pool, this, this.api)
     const copy = this.maps.duplicate()
     return copy
   }

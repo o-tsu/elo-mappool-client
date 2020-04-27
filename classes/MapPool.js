@@ -1,5 +1,6 @@
 const { Pool } = require('./Pool')
 const { MapList } = require('./MapList')
+const { EloMap } = require('./EloMap')
 
 const xhr = require('./httpio')
 const nodeOsu = require('node-osu')
@@ -48,7 +49,7 @@ export class MapPool {
 
   mapping (map) {
     return JSON.parse(JSON.stringify(Object.assign(this.sample, {
-      id: map.map_id || null,
+      id: map.id || null,
       title: map.map_title || undefined,
       creator: map.map_creator || undefined,
       artist: map.map_artist || undefined,
@@ -199,10 +200,10 @@ export class MapPool {
 
   async getMapsInPool (pool) {
     const url = `${this.base}/pools/${pool.name}/maps`
-    // const params = { map_id: id };
+    // const params = { id: id };
     const result = await this.httpReq({ url })
-    return result
-    // return result.map(map => new map(map, pool, this))
+    // return result
+    return result.map(map => new EloMap(map, pool, this))
   }
 
   async getMapInPool ({ id }, pool) {

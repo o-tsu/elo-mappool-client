@@ -8,39 +8,44 @@ export class MapList {
   }
 
   toApiStruct () {
-    return this.maps.map(map => map.toApiStruct())
+    return this.maps.map(beatmap => beatmap.toApiStruct())
   }
-  addMap (map) {
-    if (map instanceof Map) {
-      return this.maps.push(map)
+
+  addMap (beatmap) {
+    if (beatmap instanceof Map) {
+      return this.maps.push(beatmap)
     } else {
       try {
-        return this.maps.push(new EloMap(map, this.pool, this.api))
+        return this.maps.push(new EloMap(beatmap, this.pool, this.api))
       } catch (error) {
         throw new Error('not a Map instance')
       }
     }
   }
   diff (newMapList) {
-    const notInBoth = newMapList.maps.filter(map => !this.maps.includes(map)).concat(this.maps.filter(map => !newMapList.maps.includes(map)))
+    const notInBoth = newMapList.maps.filter(beatmap => !this.maps.includes(beatmap)).concat(this.maps.filter(beatmap => !newMapList.maps.includes(beatmap)))
     return new MapList(notInBoth, this.pool, this.api)
   }
+
   upload () {
     return this.api.uploadMapListIntoPool(this, this.pool)
   }
+
   deleteAll () {
-    const result = this.maps.map(map => map.delete())
+    const result = this.maps.map(beatmap => beatmap.delete())
     this.maps = []
     return result
   }
+
   duplicate () {
-    const copy = JSON.parse(JSON.stringify(this.maps))
-    copy.map(map => {
-      map = Object.setPrototypeOf(map, EloMap.prototype)
-      map.pool = this.pool
-      map.api = this.api
-    })
+    // const copy = JSON.parse(JSON.stringify(this.maps))
+    const copy = this.maps.map(map => map.duplicate())
 
     return new MapList(copy, this.pool, this.api)
+  }
+
+  async banchoResults () {
+    await Promise.all(this.maps.map(beatmap => beatmap.banchoResult()))
+    return this
   }
 }
