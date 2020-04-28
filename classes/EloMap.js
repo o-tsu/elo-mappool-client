@@ -56,32 +56,34 @@ class EloMap {
   }
 
   async banchoResult () {
-    await Object.assign(this, await this.api.apiGetMap(this))
-    Object.defineProperty(this, 'submitDate', {
+    const self = Object.assign({}, this)
+    await Object.assign(self, await self.api.apiGetMap(this))
+    Object.defineProperty(self, 'submitDate', {
       get: function () {
-        if (this._submitDate !== undefined) { return this._submitDate }
+        if (self._submitDate !== undefined) { return self._submitDate }
 
-        this._submitDate = new Date(this.raw_submitDate + ' UTC')
-        return this._submitDate
+        self._submitDate = new Date(self.raw_submitDate + ' UTC')
+        return self._submitDate
       }
     })
-    Object.defineProperty(this, 'approvedDate', {
+    Object.defineProperty(self, 'approvedDate', {
       get: function () {
-        if (this._approvedDate !== undefined) { return this._approvedDate }
+        if (self._approvedDate !== undefined) { return self._approvedDate }
 
-        this._approvedDate = this.raw_approvedDate ? new Date(this.raw_approvedDate + ' UTC') : null
-        return this._approvedDate
+        self._approvedDate = self.raw_approvedDate ? new Date(self.raw_approvedDate + ' UTC') : null
+        return self._approvedDate
       }
     })
-    Object.defineProperty(this, 'lastUpdate', {
+    Object.defineProperty(self, 'lastUpdate', {
       get: function () {
-        if (this._lastUpdate !== undefined) { return this._lastUpdate }
+        if (self._lastUpdate !== undefined) { return self._lastUpdate }
 
-        this._lastUpdate = new Date(this.raw_lastUpdate + ' UTC')
-        return this._lastUpdate
+        self._lastUpdate = new Date(self.raw_lastUpdate + ' UTC')
+        return self._lastUpdate
       }
     })
-    this.banchoResultReady = true
+    self.banchoResultReady = true
+    Object.assign(this, self)
   }
 
   async autoComplete () {
