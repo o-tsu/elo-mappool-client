@@ -1,6 +1,5 @@
 {
   "name": "elo-mappool-client",
-  "type": "module",
   "version": "0.1.0",
   "description": "map pool reader & editor api",
   "main": "index.js",
