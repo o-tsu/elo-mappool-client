@@ -1,4 +1,4 @@
-import { MapList } from './MapList'
+const { MapList } = require('./MapList');
 
 class Pool {
   constructor (res, api) {

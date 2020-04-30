@@ -1,8 +1,6 @@
-import $axios from './requester'
+const $axios = require('./requester')
 
-import { Pool } from './Pool'
-import { EloMap } from './EloMap'
-import { MapList } from './MapList'
+const [Pool, EloMap, MapList] = ['Pool', 'EloMap', 'MapList'].map(N => require(`./${N}`)[N])
 
 const nodeOsu = require('node-osu')
 

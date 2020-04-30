@@ -1,4 +1,4 @@
-import { EloMap } from './EloMap'
+const { EloMap } = require('./EloMap')
 
 class MapList {
   constructor (maps, pool, api) {

@@ -1,6 +1,6 @@
-import axios from 'axios'
+const axios = require('axios')
 
-let $axios = axios.create({
+const $axios = axios.create({
   timeout: 17000,
   headers: { 'Content-Type': 'application/json' }
 })
@@ -20,4 +20,4 @@ $axios.interceptors.response.use(function (response) {
   return Promise.reject(error)
 })
 
-export default $axios
+module.exports = $axios
