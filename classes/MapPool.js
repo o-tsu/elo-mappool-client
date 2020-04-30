@@ -102,9 +102,19 @@ class MapPool {
     return result
   }
 
-  async apiGetMap (mapped) {
-    return $axios.get(`http://47.101.168.165:5005/api/map/${mapped.id}`
-    ).then(res => res.data[0]).then(res => new nodeOsu.Beatmap({ parseNumeric: true }, res))
+  async apiGetMap (map) {
+    return this.httpReq({
+      url: 'new api',
+      params: {
+        b: map.id || -1,
+        // hash: map.hash,
+        mod: map.mod || []
+      }
+    }).then(res => new nodeOsu.Beatmap({ parseNumeric: true }, res)).catch(e => {
+      // switch to old api
+      return $axios.get(`http://47.101.168.165:5005/api/map/${map.id}`)
+        .then(res => res.data[0]).then(res => new nodeOsu.Beatmap({ parseNumeric: true }, res))
+    })
   }
 
   // request = { url, method: 'GET', params: {}, data: {} }
