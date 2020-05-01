@@ -2,13 +2,17 @@ const $axios = require('./requester')
 
 const [Pool, EloMap, MapList] = ['Pool', 'EloMap', 'MapList'].map(N => require(`./${N}`)[N])
 
+
 const nodeOsu = require('node-osu')
 
 class MapPool {
-  constructor ({
+  constructor({
     apiBase = 'http://47.101.168.165:5004',
     memoize = null,
-    autoComplete = false,
+    autoComplete = {
+      map: false,
+      pool: false
+    },
     sample = {
       id: null,
       index: null,
@@ -37,14 +41,35 @@ class MapPool {
     this.base = apiBase
     this.autoComplete = autoComplete
     this.sample = sample
-    if (memoize === 'nodejs') {
-      // todo
+    switch (memoize) {
+      case 'localStorage':
+        {
+          this.initlocalStorage();
+        }
     }
   }
 
+  initlocalStorage() {
+    if (!this.supportLocalStorage()) {
+      return;
+    }
+    const memoize = require('fast-memoize');
+    const handler = require('./localStorage');
+    const _apiGetMap = this.apiGetMap;
+    const this.apiGetMap = memoize(_apiGetMap, {
+      cache: require('./localStorage');
+    })
+  }
+  supportLocalStorage() {
+    try {
+      return 'localStorage' in window && window['localStorage'] != null;
+    } catch (e) {
+      return false;
+    }
+  }
   // sync -----------------------------------------------------------
 
-  mapping (map) {
+  mapping(map) {
     return JSON.parse(JSON.stringify(Object.assign(this.sample, {
       id: map.map_id || null,
       title: map.map_title || undefined,
@@ -62,7 +87,7 @@ class MapPool {
     })))
   }
 
-  validateMap (mapped) {
+  validateMap(mapped) {
     const result = {
       required: false,
       completed: false
@@ -77,20 +102,20 @@ class MapPool {
     return result
   }
 
-  validateMaps (list) {
+  validateMaps(list) {
     return list.map((map) => this.validateMap(map))
   }
 
   // async -----------------------------------------------------------
 
   // votes
-  async getPoolVotes ({ name }, { id = '' } = {}) {
+  async getPoolVotes({ name }, { id = '' } = {}) {
     const url = `${this.base}/pools/${name}/votes/${id}`
     const result = this.httpReq({ url })
     return result
   }
 
-  async votePool (upvote, pool, user) {
+  async votePool(upvote, pool, user) {
     const url = `${this.base}/pools/${pool.name}/votes`
     const data = {
       vote: upvote,
@@ -100,17 +125,16 @@ class MapPool {
     return result
   }
 
-  async apiGetMap (mapped) {
-    return $axios.get(`http://47.101.168.165:5005/api/map/${mapped.id}`
-    ).then(res => res.data[0]).then(res => new nodeOsu.Beatmap({ parseNumeric: true }, res))
+  async apiGetMap(mapped) {
+    return $axios.get(`http://47.101.168.165:5005/api/map/${mapped.id}`).then(res => res.data[0]).then(res => new nodeOsu.Beatmap({ parseNumeric: true }, res))
   }
 
   // request = { url, method: 'GET', params: {}, data: {} }
-  async httpReq (request) {
+  async httpReq(request) {
     return $axios(request).then(res => res.data)
   }
 
-  async toNodeOsuBeatmap (map) {
+  async toNodeOsuBeatmap(map) {
     const mapped = Object.setPrototypeOf(this.mapping(map), nodeOsu.Beatmap.prototype)
     if (this.autoComplete) {
       if (this.validateMap(mapped).complete === false) return Object.assign(mapped, await this.apiGetMap(mapped))
@@ -120,7 +144,7 @@ class MapPool {
     }
   }
 
-  async toNodeOsuBeatmapList (list) {
+  async toNodeOsuBeatmapList(list) {
     return Promise.all(list.map(async sel => {
       await this.toNodeOsuBeatmap(sel)
     }))
@@ -135,18 +159,18 @@ class MapPool {
           status: string //for PUTS /pools/{old_mappool_name}
       }
       */
-  async getPools () {
+  async getPools() {
     return this.httpReq(`${this.base}/pools/`).then(res => res.map(pool => new Pool(pool, this)))
   }
 
-  async getPool ({ name }) {
+  async getPool({ name }) {
     return this.httpReq(`${this.base}/pools/${name}`).then(res => {
       if (!res) throw new Error('未找到此地图，或api暂时无法访问')
       return new Pool(res, this)
     })
   }
 
-  async deletePoolByPoolName ({ name, submitter }) {
+  async deletePoolByPoolName({ name, submitter }) {
     const url = `${this.base}/pools/${name}`
     const params = {
       submitter
@@ -165,7 +189,7 @@ class MapPool {
   //     return result;
   // }
 
-  async createPool ({ name, submitter, creator }) {
+  async createPool({ name, submitter, creator }) {
     const url = `${this.base}/pools/${name}`
     const data = {
       submitter,
@@ -175,7 +199,7 @@ class MapPool {
     return new Pool(result, this)
   }
 
-  async editPoolByPoolName ({ oldName, name, status, submitter }) {
+  async editPoolByPoolName({ oldName, name, status, submitter }) {
     const url = `${this.base}/pools/${oldName}`
     const data = {
       mappool_name: name,
@@ -201,7 +225,7 @@ class MapPool {
       }
       */
 
-  async getMapsInPool (pool) {
+  async getMapsInPool(pool) {
     const url = `${this.base}/pools/${pool.name}/maps`
     // const params = { id: id };
     const result = await this.httpReq({ url })
@@ -209,18 +233,18 @@ class MapPool {
     return result.map(map => new EloMap(map, pool, this))
   }
 
-  async getMapInPool ({ id }, pool) {
+  async getMapInPool({ id }, pool) {
     const url = `${this.base}/pools/${pool.name}/maps/${id}`
     const result = this.httpReq({ url })
     return result
   }
 
-  async uploadMapsIntoPool (maps, pool) {
+  async uploadMapsIntoPool(maps, pool) {
     const list = new MapList(maps, pool, this)
     return this.uploadMapListIntoPool(list, pool)
   }
 
-  async uploadMapListIntoPool (mapList, pool) {
+  async uploadMapListIntoPool(mapList, pool) {
     const validateResult = this.validateMaps(mapList.maps)
     const allMapsValidated = validateResult.every(result => result.required)
     if (!allMapsValidated) {
@@ -240,7 +264,7 @@ class MapPool {
     return result
   }
 
-  async deleteMapFromPool (map, pool) {
+  async deleteMapFromPool(map, pool) {
     const url = `${this.base}/pools/${pool.name}/maps/${map.id}`
     const params = {
       submitter: pool.submitter

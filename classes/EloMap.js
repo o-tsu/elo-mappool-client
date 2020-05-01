@@ -87,7 +87,7 @@ class EloMap {
   }
 
   async autoComplete () {
-    if (this.api.autoComplete) {
+    if (this.api.autoComplete.map) {
       const result = this.api.validateMap(this)
       if (!result.complete) {
         await this.banchoResult()
