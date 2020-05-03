@@ -41,11 +41,13 @@ class EloMap {
     const apiResult = EloMap.toApiStructStatic(map)
     return new EloMap(apiResult, pool, api)
   }
-
+  async upload () {
+    return this.api.uploadMapsIntoPool([this], this.pool)
+  }
   async update () {
     try {
-      this.api.deleteMapFromPool(this, this.pool)
-      return this.api.uploadMapsIntoPool([this], this.pool)
+      await this.delete();
+      return this.upload();
     } catch (error) {
       throw error
     }

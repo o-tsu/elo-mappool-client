@@ -2,7 +2,8 @@
 class User {
   constructor (user, api) {
     this.id = user.id || -1
-    this.name = user.name || 'Guest'
+    this.name = user.name || 'Guest';
+    this.token = user.token  || '';
     this.api = api
   }
 
