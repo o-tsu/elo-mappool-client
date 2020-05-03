@@ -96,7 +96,7 @@ class MapPool {
       vote: upvote,
       submitter: user.id
     }
-    const result = this.httpReq({ url, data, method: 'POST' })
+    const result = this.httpReq({ url, data, method: 'post' })
     return result
   }
 
@@ -131,8 +131,8 @@ class MapPool {
       pool = {
           name: string,
           submitter: int,
-          oldName: string //for PUTS /pools/{old_mappool_name}
-          status: string //for PUTS /pools/{old_mappool_name}
+          oldName: string //for putS /pools/{old_mappool_name}
+          status: string //for putS /pools/{old_mappool_name}
       }
       */
   async getPools () {
@@ -151,7 +151,7 @@ class MapPool {
     const params = {
       submitter
     }
-    const result = this.httpReq({ url, params, method: 'DELETE' })
+    const result = this.httpReq({ url, params, method: 'delete' })
     return result
   }
 
@@ -161,7 +161,7 @@ class MapPool {
   //         id,
   //         submitter,
   //     }
-  //     const result = this.httpReq({ url, data, method: "DELETE" });
+  //     const result = this.httpReq({ url, data, method: "delete" });
   //     return result;
   // }
 
@@ -171,7 +171,7 @@ class MapPool {
       submitter,
       creator
     }
-    const result = await this.httpReq({ url, data, method: 'POST' })
+    const result = await this.httpReq({ url, data, method: 'post' })
     return new Pool(result, this)
   }
 
@@ -182,7 +182,7 @@ class MapPool {
       status,
       submitter
     }
-    const result = this.httpReq({ url, data, method: 'PUT' })
+    const result = this.httpReq({ url, data, method: 'put' })
     return result
   }
 
@@ -236,7 +236,7 @@ class MapPool {
       submitter: pool.submitter
     }
     const data = struct
-    const result = this.httpReq({ url, data, method: 'POST' })
+    const result = this.httpReq({ url, data, method: 'post' })
     return result
   }
 
@@ -245,7 +245,7 @@ class MapPool {
     const params = {
       submitter: pool.submitter
     }
-    const result = this.httpReq({ url, params, method: 'DELETE' })
+    const result = this.httpReq({ url, params, method: 'delete' })
     return result
   }
 }
