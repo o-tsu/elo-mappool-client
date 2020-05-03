@@ -1,6 +1,6 @@
 const $axios = require('./requester')
 
-const [Pool, EloMap, MapList] = ['Pool', 'EloMap', 'MapList'].map(N => require(`./${N}`)[N])
+const [Pool, EloMap, MapList, User] = ['Pool', 'EloMap', 'MapList', 'User'].map(N => require(`./${N}`)[N])
 
 const nodeOsu = require('node-osu')
 
@@ -9,6 +9,10 @@ class MapPool {
     apiBase = 'http://47.101.168.165:5004',
     memoize = null,
     autoComplete = false,
+    user = {
+      id: -1,
+      token: ''
+    },
     sample = {
       id: null,
       index: null,
@@ -34,6 +38,7 @@ class MapPool {
       length: { total: -1, drain: -1 }
     }
   } = {}) {
+    this.user = new User(user, this)
     this.base = apiBase
     this.autoComplete = autoComplete
     this.sample = sample
@@ -101,12 +106,15 @@ class MapPool {
   }
 
   async apiGetMap (mapped) {
-    return $axios.get(`http://47.101.168.165:5005/api/map/${mapped.id}`
-    ).then(res => res.data[0]).then(res => new nodeOsu.Beatmap({ parseNumeric: true }, res))
+    return $axios.get(`http://47.101.168.165:5005/api/map/${mapped.id}`).then(res => res.data[0]).then(res => new nodeOsu.Beatmap({ parseNumeric: true }, res))
   }
 
   // request = { url, method: 'GET', params: {}, data: {} }
   async httpReq (request) {
+    request.headers = {
+      osuid: this.user.id,
+      'x-osutoken': this.user.token
+    }
     return $axios(request).then(res => res.data)
   }
 
