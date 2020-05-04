@@ -27,7 +27,7 @@ class EloMap {
 
   mapping (apiResult) {
     this.id = apiResult.map_id
-    this.mod = apiResult.mod.toString().match(/.{1,2}/g)
+    this.mod = (typeof apiResult.mod == 'string') ? apiResult.mod.toString().match(/.{1,2}/g) : apiResult.mod
     this.index = apiResult.mod_index
     this.stage = apiResult.stage
     this.selector = apiResult.selector
