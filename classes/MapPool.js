@@ -73,7 +73,7 @@ class MapPool {
       completed: false
     }
     if (Object.entries(mapped).some(([prop, value]) => value === null)) return result
-    else if (mapped.mod.length <= 0) return result
+    else if (mapped.mods.length <= 0) return result
     result.required = true
     if (Object.entries(mapped).some(([prop, value]) => value === undefined)) return result
     if (['null', 'undefined'].includes(typeof mapped.difficulty) || ['null', 'undefined'].includes(typeof mapped.length)) return result
