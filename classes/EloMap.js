@@ -73,33 +73,38 @@ class EloMap {
 
   async banchoResult () {
     const self = Object.assign({}, this)
-    await Object.assign(self, await self.api.apiGetMap(this))
-    Object.defineProperty(self, 'submitDate', {
-      get: function () {
-        if (self._submitDate !== undefined) { return self._submitDate }
+    try {
+      await Object.assign(self, await self.api.apiGetMap(this))
+      Object.defineProperty(self, 'submitDate', {
+        get: function () {
+          if (self._submitDate !== undefined) { return self._submitDate }
 
-        self._submitDate = new Date(self.raw_submitDate + ' UTC')
-        return self._submitDate
-      }
-    })
-    Object.defineProperty(self, 'approvedDate', {
-      get: function () {
-        if (self._approvedDate !== undefined) { return self._approvedDate }
+          self._submitDate = new Date(self.raw_submitDate + ' UTC')
+          return self._submitDate
+        }
+      })
+      Object.defineProperty(self, 'approvedDate', {
+        get: function () {
+          if (self._approvedDate !== undefined) { return self._approvedDate }
 
-        self._approvedDate = self.raw_approvedDate ? new Date(self.raw_approvedDate + ' UTC') : null
-        return self._approvedDate
-      }
-    })
-    Object.defineProperty(self, 'lastUpdate', {
-      get: function () {
-        if (self._lastUpdate !== undefined) { return self._lastUpdate }
+          self._approvedDate = self.raw_approvedDate ? new Date(self.raw_approvedDate + ' UTC') : null
+          return self._approvedDate
+        }
+      })
+      Object.defineProperty(self, 'lastUpdate', {
+        get: function () {
+          if (self._lastUpdate !== undefined) { return self._lastUpdate }
 
-        self._lastUpdate = new Date(self.raw_lastUpdate + ' UTC')
-        return self._lastUpdate
-      }
-    })
-    self.banchoResultReady = true
-    Object.assign(this, self)
+          self._lastUpdate = new Date(self.raw_lastUpdate + ' UTC')
+          return self._lastUpdate
+        }
+      })
+      self.banchoResultReady = true
+      Object.assign(this, self)
+    } catch (error) {
+      self.banchoResultReady = false
+      console.log('get result failed')
+    }
   }
 
   async autoComplete () {
