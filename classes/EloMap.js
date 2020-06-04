@@ -19,7 +19,7 @@ class EloMap {
     return {
       object_id: map._id,
       beatmap_id: map.id,
-      mods: map.mod,
+      mods: map.mods,
       mod_index: map.index,
       stage: map.stage,
       selector: map.selector
@@ -29,7 +29,7 @@ class EloMap {
   mapping (apiResult) {
     this._id = apiResult.object_id
     this.id = apiResult.beatmap_id
-    this.mods = (typeof apiResult.mod === 'string') ? apiResult.mod.toString().match(/.{1,2}/g) : apiResult.mods
+    this.mods = (typeof apiResult.mod === 'string') ? apiResult.mods.toString().match(/.{1,2}/g) : apiResult.mods
     this.mod = this.mods // new api uses mods but old api uses mod we just add a refer to mods to support both
     this.index = apiResult.mod_index
     this.stage = apiResult.stage
