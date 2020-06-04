@@ -17,8 +17,9 @@ class EloMap {
 
   static toApiStructStatic (map) {
     return {
-      map_id: map.id,
-      mod: map.mod,
+      object_id: map._id,
+      beatmap_id: map.id,
+      mods: map.mod,
       mod_index: map.index,
       stage: map.stage,
       selector: map.selector
@@ -26,8 +27,10 @@ class EloMap {
   }
 
   mapping (apiResult) {
-    this.id = apiResult.map_id
-    this.mod = (typeof apiResult.mod == 'string') ? apiResult.mod.toString().match(/.{1,2}/g) : apiResult.mod
+    this._id = apiResult.object_id
+    this.id = apiResult.beatmap_id
+    this.mods = (typeof apiResult.mod === 'string') ? apiResult.mod.toString().match(/.{1,2}/g) : apiResult.mods
+    this.mod = this.mods // new api uses mods but old api uses mod we just add a refer to mods to support both
     this.index = apiResult.mod_index
     this.stage = apiResult.stage
     this.selector = apiResult.selector
@@ -41,16 +44,27 @@ class EloMap {
     const apiResult = EloMap.toApiStructStatic(map)
     return new EloMap(apiResult, pool, api)
   }
+
   async upload () {
-    return this.api.uploadMapsIntoPool([this], this.pool)
-  }
-  async update () {
-    try {
-      await this.delete();
-      return this.upload();
-    } catch (error) {
-      throw error
+    const result = await this.api.uploadMapsIntoPool([this], this.pool)
+    if (result) {
+      const updated = await this.api.getMapInPool(this, this.pool)
+      this.mapping(updated)
     }
+    return result
+  }
+
+  async update () {
+    if (this._id) this.api.updateMapFromObjectId(this)
+    else throw new Error('not implemented')
+    // try {
+    //   await this.delete()
+    //   return this.upload()
+    // } catch (error) {
+    //   throw error
+    // }
+    // await this.api.updateMap(this, this.pool)
+    // console.log('not impl')
   }
 
   async delete () {
