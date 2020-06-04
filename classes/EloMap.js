@@ -101,9 +101,11 @@ class EloMap {
       })
       self.banchoResultReady = true
       Object.assign(this, self)
+      return true
     } catch (error) {
       self.banchoResultReady = false
       console.log('get result failed')
+      return false
     }
   }
 
