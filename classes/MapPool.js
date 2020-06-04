@@ -17,7 +17,7 @@ class MapPool {
       id: null,
       index: null,
       stage: null,
-      mod: [],
+      mods: [],
       selector: undefined,
       submitter: null,
       beatmapSetId: undefined,
