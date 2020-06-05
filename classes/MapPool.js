@@ -1,8 +1,6 @@
-import $axios from './requester'
+const $axios = require('./requester')
 
-import { Pool } from './Pool'
-import { EloMap } from './EloMap'
-import { MapList } from './MapList'
+const [Pool, EloMap, MapList, User] = ['Pool', 'EloMap', 'MapList', 'User'].map(N => require(`./${N}`)[N])
 
 const nodeOsu = require('node-osu')
 
@@ -11,11 +9,15 @@ class MapPool {
     apiBase = 'http://47.101.168.165:5004',
     memoize = null,
     autoComplete = false,
+    user = {
+      id: -1,
+      token: ''
+    },
     sample = {
       id: null,
       index: null,
       stage: null,
-      mod: [],
+      mods: [],
       selector: undefined,
       submitter: null,
       beatmapSetId: undefined,
@@ -36,6 +38,7 @@ class MapPool {
       length: { total: -1, drain: -1 }
     }
   } = {}) {
+    this.user = new User(user, this)
     this.base = apiBase
     this.autoComplete = autoComplete
     this.sample = sample
@@ -70,7 +73,7 @@ class MapPool {
       completed: false
     }
     if (Object.entries(mapped).some(([prop, value]) => value === null)) return result
-    else if (mapped.mod.length <= 0) return result
+    else if (mapped.mods.length <= 0) return result
     result.required = true
     if (Object.entries(mapped).some(([prop, value]) => value === undefined)) return result
     if (['null', 'undefined'].includes(typeof mapped.difficulty) || ['null', 'undefined'].includes(typeof mapped.length)) return result
@@ -87,28 +90,31 @@ class MapPool {
 
   // votes
   async getPoolVotes ({ name }, { id = '' } = {}) {
-    const url = `${this.base}/pools/${name}/votes/${id}`
+    const url = `${this.base}/mappool/${name}/votes/${id}`
     const result = this.httpReq({ url })
     return result
   }
 
   async votePool (upvote, pool, user) {
-    const url = `${this.base}/pools/${pool.name}/votes`
+    const url = `${this.base}/mappool/${pool.name}/votes`
     const data = {
       vote: upvote,
       submitter: user.id
     }
-    const result = this.httpReq({ url, data, method: 'POST' })
+    const result = this.httpReq({ url, data, method: 'post' })
     return result
   }
 
   async apiGetMap (mapped) {
-    return $axios.get(`http://47.101.168.165:5005/api/map/${mapped.id}`
-    ).then(res => res.data[0]).then(res => new nodeOsu.Beatmap({ parseNumeric: true }, res))
+    return $axios.get(`http://47.101.168.165:5005/api/map/${mapped.id}`).then(res => res.data[0]).then(res => new nodeOsu.Beatmap({ parseNumeric: true }, res))
   }
 
   // request = { url, method: 'GET', params: {}, data: {} }
   async httpReq (request) {
+    request.headers = {
+      osuid: this.user.id,
+      'x-otsutoken': this.user.token
+    }
     return $axios(request).then(res => res.data)
   }
 
@@ -128,67 +134,74 @@ class MapPool {
     }))
   }
 
-  // api pools
+  // api mappool
   /*
       pool = {
           name: string,
           submitter: int,
-          oldName: string //for PUTS /pools/{old_mappool_name}
-          status: string //for PUTS /pools/{old_mappool_name}
+          oldName: string //for putS /mappool/{old_mappool_name}
+          status: string //for putS /mappool/{old_mappool_name}
       }
       */
   async getPools () {
-    return this.httpReq(`${this.base}/pools/`).then(res => res.map(pool => new Pool(pool, this)))
+    return this.httpReq({ url: `${this.base}/mappool/` }).then(res => res.map(pool => new Pool(pool, this)))
   }
 
   async getPool ({ name }) {
-    return this.httpReq(`${this.base}/pools/${name}`).then(res => {
+    return this.httpReq(`${this.base}/mappool/${name}`).then(res => {
       if (!res) throw new Error('未找到此地图，或api暂时无法访问')
       return new Pool(res, this)
     })
   }
 
   async deletePoolByPoolName ({ name, submitter }) {
-    const url = `${this.base}/pools/${name}`
+    const url = `${this.base}/mappool/${name}`
     const params = {
       submitter
     }
-    const result = this.httpReq({ url, params, method: 'DELETE' })
+    const result = this.httpReq({ url, params, method: 'delete' })
     return result
   }
 
   // async deletePoolByPoolId ({ id, submitter }) {
-  //     const url = `${this.base}/pools/`;
+  //     const url = `${this.base}/mappool/`;
   //     const data = {
   //         id,
   //         submitter,
   //     }
-  //     const result = this.httpReq({ url, data, method: "DELETE" });
+  //     const result = this.httpReq({ url, data, method: "delete" });
   //     return result;
   // }
 
-  async createPool ({ name, submitter, creator }) {
-    const url = `${this.base}/pools/${name}`
-    const data = {
-      submitter,
-      creator
-    }
-    const result = await this.httpReq({ url, data, method: 'POST' })
-    return new Pool(result, this)
-  }
-
-  async editPoolByPoolName ({ oldName, name, status, submitter }) {
-    const url = `${this.base}/pools/${oldName}`
+  async createPool ({ name, host, cover, description, recommendElo }) {
+    const url = `${this.base}/mappool`
     const data = {
       mappool_name: name,
-      status,
-      submitter
+      host,
+      cover,
+      description,
+      recommend_elo: recommendElo
     }
-    const result = this.httpReq({ url, data, method: 'PUT' })
+    const result = await this.httpReq({ url, data, method: 'post' })
+    // if (result) return new Pool(await this.getPool, this)
     return result
   }
 
-  // api pools/maps
+  async editPoolByPoolName ({ oldName, name, status, host, cover, recommendElo, description }) {
+    const url = `${this.base}/mappool/${oldName}`
+    const data = {
+      mappool_name: name,
+      status,
+      host,
+      cover,
+      description,
+      recommend_elo: recommendElo
+    }
+    const result = this.httpReq({ url, data, method: 'put' })
+    return result
+  }
+
+  // api mappool/maps
   /*
       pool 同上
 
@@ -204,16 +217,32 @@ class MapPool {
       */
 
   async getMapsInPool (pool) {
-    const url = `${this.base}/pools/${pool.name}/maps`
+    const url = `${this.base}/mappool/${pool.name}/maps`
     // const params = { id: id };
     const result = await this.httpReq({ url })
     // return result
+    // console.log(result)
+    // quick fix for test
+    if (typeof result === 'object' && result.detail) return []
     return result.map(map => new EloMap(map, pool, this))
   }
 
   async getMapInPool ({ id }, pool) {
-    const url = `${this.base}/pools/${pool.name}/maps/${id}`
-    const result = this.httpReq({ url })
+    const url = `${this.base}/mappool/${pool.name}/maps/${id}`
+    const result = await this.httpReq({ url })
+
+    return result
+  }
+
+  async updateMap (map, pool) {
+    const url = `${this.base}/mappool/${pool.name}/maps`
+    // const struct = {
+    //   maps: mapList.toApiStruct(),
+    //   submitter: pool.submitter
+    // }
+    const struct = map.toApiStruct()
+    const data = struct
+    const result = this.httpReq({ url, data, method: 'post' })
     return result
   }
 
@@ -232,22 +261,43 @@ class MapPool {
       }
     }
 
-    const url = `${this.base}/pools/${pool.name}/maps`
-    const struct = {
-      maps: mapList.toApiStruct(),
-      submitter: pool.submitter
-    }
+    const url = `${this.base}/mappool/${pool.name}/maps`
+    // const struct = {
+    //   maps: mapList.toApiStruct(),
+    //   submitter: pool.submitter
+    // }
+    const struct = mapList.toApiStruct()
     const data = struct
-    const result = this.httpReq({ url, data, method: 'POST' })
+    const result = this.httpReq({ url, data, method: 'post' })
     return result
   }
 
   async deleteMapFromPool (map, pool) {
-    const url = `${this.base}/pools/${pool.name}/maps/${map.id}`
-    const params = {
-      submitter: pool.submitter
-    }
-    const result = this.httpReq({ url, params, method: 'DELETE' })
+    if (map._id) return this.deleteMapFromObjectId(map)
+    else return this.deleteMapFromPoolUseRelativeId(map, pool)
+  }
+
+  // async updateMap(map,pool){}
+
+  async updateMapFromObjectId (map) {
+    const url = `${this.base}/mappool/maps/${map._id}`
+    const body = map.toApiStruct()
+    const result = this.httpReq({ url, body, method: 'PUT' })
+    return result
+  }
+
+  async deleteMapFromObjectId (map) {
+    const url = `${this.base}/mappool/maps/${map._id}`
+    const result = this.httpReq({ url, method: 'DELETE' })
+    return result
+  }
+
+  async deleteMapFromPoolUseRelativeId (map, pool) {
+    const url = `${this.base}/mappool/${pool.name}/maps/${map.id}`
+    // const params = {
+    //   submitter: pool.submitter
+    // }
+    const result = this.httpReq({ url, method: 'delete' })
     return result
   }
 }

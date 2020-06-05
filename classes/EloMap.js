@@ -17,8 +17,9 @@ class EloMap {
 
   static toApiStructStatic (map) {
     return {
-      map_id: map.id,
-      mod: map.mod,
+      object_id: map._id,
+      beatmap_id: map.id,
+      mods: map.mods,
       mod_index: map.index,
       stage: map.stage,
       selector: map.selector
@@ -26,8 +27,10 @@ class EloMap {
   }
 
   mapping (apiResult) {
-    this.id = apiResult.map_id
-    this.mod = apiResult.mod
+    this._id = apiResult.object_id
+    this.id = apiResult.beatmap_id
+    this.mods = (typeof apiResult.mod === 'string') ? apiResult.mods.toString().match(/.{1,2}/g) : apiResult.mods
+    this.mod = this.mods // new api uses mods but old api uses mod we just add a refer to mods to support both
     this.index = apiResult.mod_index
     this.stage = apiResult.stage
     this.selector = apiResult.selector
@@ -42,13 +45,26 @@ class EloMap {
     return new EloMap(apiResult, pool, api)
   }
 
-  async update () {
-    try {
-      this.api.deleteMapFromPool(this, this.pool)
-      return this.api.uploadMapsIntoPool([this], this.pool)
-    } catch (error) {
-      throw error
+  async upload () {
+    const result = await this.api.uploadMapsIntoPool([this], this.pool)
+    if (result) {
+      const updated = await this.api.getMapInPool(this, this.pool)
+      this.mapping(updated)
     }
+    return result
+  }
+
+  async update () {
+    if (this._id) this.api.updateMapFromObjectId(this)
+    else throw new Error('not implemented')
+    // try {
+    //   await this.delete()
+    //   return this.upload()
+    // } catch (error) {
+    //   throw error
+    // }
+    // await this.api.updateMap(this, this.pool)
+    // console.log('not impl')
   }
 
   async delete () {
@@ -57,33 +73,40 @@ class EloMap {
 
   async banchoResult () {
     const self = Object.assign({}, this)
-    await Object.assign(self, await self.api.apiGetMap(this))
-    Object.defineProperty(self, 'submitDate', {
-      get: function () {
-        if (self._submitDate !== undefined) { return self._submitDate }
+    try {
+      await Object.assign(self, await self.api.apiGetMap(this))
+      Object.defineProperty(self, 'submitDate', {
+        get: function () {
+          if (self._submitDate !== undefined) { return self._submitDate }
 
-        self._submitDate = new Date(self.raw_submitDate + ' UTC')
-        return self._submitDate
-      }
-    })
-    Object.defineProperty(self, 'approvedDate', {
-      get: function () {
-        if (self._approvedDate !== undefined) { return self._approvedDate }
+          self._submitDate = new Date(self.raw_submitDate + ' UTC')
+          return self._submitDate
+        }
+      })
+      Object.defineProperty(self, 'approvedDate', {
+        get: function () {
+          if (self._approvedDate !== undefined) { return self._approvedDate }
 
-        self._approvedDate = self.raw_approvedDate ? new Date(self.raw_approvedDate + ' UTC') : null
-        return self._approvedDate
-      }
-    })
-    Object.defineProperty(self, 'lastUpdate', {
-      get: function () {
-        if (self._lastUpdate !== undefined) { return self._lastUpdate }
+          self._approvedDate = self.raw_approvedDate ? new Date(self.raw_approvedDate + ' UTC') : null
+          return self._approvedDate
+        }
+      })
+      Object.defineProperty(self, 'lastUpdate', {
+        get: function () {
+          if (self._lastUpdate !== undefined) { return self._lastUpdate }
 
-        self._lastUpdate = new Date(self.raw_lastUpdate + ' UTC')
-        return self._lastUpdate
-      }
-    })
-    self.banchoResultReady = true
-    Object.assign(this, self)
+          self._lastUpdate = new Date(self.raw_lastUpdate + ' UTC')
+          return self._lastUpdate
+        }
+      })
+      self.banchoResultReady = true
+      Object.assign(this, self)
+      return true
+    } catch (error) {
+      self.banchoResultReady = false
+      console.log('get result failed')
+      return false
+    }
   }
 
   async autoComplete () {
