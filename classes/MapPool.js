@@ -106,7 +106,8 @@ class MapPool {
   }
 
   async apiGetMap (mapped) {
-    return $axios.get(`http://47.101.168.165:5005/api/map/${mapped.id}`).then(res => res.data[0]).then(res => new nodeOsu.Beatmap({ parseNumeric: true }, res))
+    return this.httpReq({ url: `http://47.101.168.165:5004/map/${mapped.id}`, params: { mod: mapped.mods.join('') } }).then(res => res.data).then(res => new nodeOsu.Beatmap({ parseNumeric: true }, res))
+    // return $axios.get(`http://47.101.168.165:5004/map/${mapped.id}`).then(res => res.data[0]).then(res => new nodeOsu.Beatmap({ parseNumeric: true }, res))
   }
 
   // request = { url, method: 'GET', params: {}, data: {} }
